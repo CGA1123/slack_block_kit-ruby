@@ -1,0 +1,23 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      otp:
+        description: 'RubyGems 2FA Code'
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+      - run: gem install bundler:2.1.4
+      - run: bundle install
+      - run: bundle exec rake release
+        env:
+          GEM_HOST_OTP_CODE: ${{ github.event.inputs.otp }}
+
